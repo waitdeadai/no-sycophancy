@@ -1,0 +1,55 @@
+name: tests
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  fixtures:
+    name: Fixture tests (Ubuntu)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify dependencies
+        run: jq --version
+
+      - name: Test 1 — "Great question!" opener → BLOCK
+        run: |
+          printf '%s' '{"hook_event_name":"Stop","last_assistant_message":"Great question! The answer is 42."}' > /tmp/t1.json
+          out="$(bash no-sycophancy.sh < /tmp/t1.json 2>&1; echo "EXIT=$?")"
+          echo "$out"
+          echo "$out" | grep -q "BLOCKED: praise-spam" || { echo "FAIL: expected BLOCKED"; exit 1; }
+          echo "$out" | grep -q "EXIT=2" || { echo "FAIL: expected exit 2"; exit 1; }
+
+      - name: Test 2 — substantive opener → ALLOW
+        run: |
+          printf '%s' '{"hook_event_name":"Stop","last_assistant_message":"The answer is 42 because the deeper question is..."}' > /tmp/t2.json
+          out="$(bash no-sycophancy.sh < /tmp/t2.json 2>&1; echo "EXIT=$?")"
+          echo "$out"
+          echo "$out" | grep -q "EXIT=0" || { echo "FAIL: expected exit 0"; exit 1; }
+
+      - name: Test 3 — "You're absolutely right" → BLOCK
+        run: |
+          printf '%s' "{\"hook_event_name\":\"Stop\",\"last_assistant_message\":\"You're absolutely right, I should have caught that earlier.\"}" > /tmp/t3.json
+          out="$(bash no-sycophancy.sh < /tmp/t3.json 2>&1; echo "EXIT=$?")"
+          echo "$out"
+          echo "$out" | grep -q "BLOCKED: praise-spam" || { echo "FAIL: expected BLOCKED"; exit 1; }
+          echo "$out" | grep -q "EXIT=2" || { echo "FAIL: expected exit 2"; exit 1; }
+
+      - name: Test 4 — operator-requested encouragement (allow-clause) → ALLOW
+        run: |
+          printf '%s' '{"hook_event_name":"Stop","last_assistant_message":"You asked for encouragement — here is a recap of what is going well."}' > /tmp/t4.json
+          out="$(bash no-sycophancy.sh < /tmp/t4.json 2>&1; echo "EXIT=$?")"
+          echo "$out"
+          echo "$out" | grep -q "EXIT=0" || { echo "FAIL: expected exit 0"; exit 1; }
+
+      - name: Test 5 — substantive use of praise vocabulary → ALLOW
+        run: |
+          printf '%s' '{"hook_event_name":"Stop","last_assistant_message":"That is a great question and the math is straightforward."}' > /tmp/t5.json
+          out="$(bash no-sycophancy.sh < /tmp/t5.json 2>&1; echo "EXIT=$?")"
+          echo "$out"
+          echo "$out" | grep -q "EXIT=0" || { echo "FAIL: expected exit 0"; exit 1; }
+
+      - name: Summary
+        run: echo "All five fixture tests pass."

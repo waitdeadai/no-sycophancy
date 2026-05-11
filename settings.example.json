@@ -1,0 +1,30 @@
+{
+  "_comment": [
+    "Minimal Claude Code settings.json snippet to wire no-sycophancy.",
+    "Merge these `hooks` entries into your own .claude/settings.json."
+  ],
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/no-sycophancy.sh\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/no-sycophancy.sh\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

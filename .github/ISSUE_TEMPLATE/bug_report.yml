@@ -1,0 +1,23 @@
+name: Bug report
+description: Hook fired when it shouldn't, or didn't fire when it should.
+labels: [bug]
+body:
+  - type: textarea
+    id: reproducer
+    attributes:
+      label: Minimal reproducer (JSON payload)
+      render: json
+    validations:
+      required: true
+  - type: textarea
+    id: observed
+    attributes: { label: Observed, render: text }
+    validations: { required: true }
+  - type: textarea
+    id: expected
+    attributes: { label: Expected, render: text }
+    validations: { required: true }
+  - type: input
+    id: jq
+    attributes: { label: jq version, placeholder: jq-1.7 }
+    validations: { required: true }
