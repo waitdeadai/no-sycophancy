@@ -20,7 +20,7 @@ Sycophancy is the most-prevalent dark pattern in current LLMs:
 - Sean Goedecke called sycophancy [the first LLM "dark pattern"](https://www.seangoedecke.com/ai-sycophancy/) — a name that has stuck in the field.
 - OpenAI [rolled back GPT-4o in April 2025](https://news.northeastern.edu/2026/02/23/llm-sycophancy-ai-chatbots/) for being excessively flattering and obsequious.
 
-In-context defenses (system prompts saying *"do not be sycophantic"*) drift over long sessions. The model can't be the judge of its own sycophancy. Out-of-band enforcement is the only kind that survives.
+In-context defenses (system prompts saying *"do not be sycophantic"*) can drift over long sessions. The model should not be the only judge of its own sycophancy, so this hook moves the verdict path outside the model context.
 
 ## Differentiation from existing anti-sycophancy tools
 
@@ -28,7 +28,7 @@ In-context defenses (system prompts saying *"do not be sycophantic"*) drift over
 |---|---|---|
 | [FutureSpeakAI/anti-sycophancy](https://github.com/FutureSpeakAI/anti-sycophancy) | Runtime circuit breaker + system-prompt calibration | Lives in-context; model can drift past it |
 | [0xcjl/anti-sycophancy](https://github.com/0xcjl/anti-sycophancy) | Three-layer Claude Code skill | Skill-based — depends on the model invoking the skill |
-| **no-sycophancy** | **Stop hook (bash, out-of-band)** | **Catches the linguistic signature at turn-end; model can't argue with grep** |
+| **no-sycophancy** | **Stop hook (bash, out-of-band)** | **Catches the configured linguistic signature at turn-end; no LLM call decides the verdict** |
 
 The three approaches are complementary, not competitive. Run them all if you want defense-in-depth.
 
@@ -66,6 +66,23 @@ The full regex is in [`no-sycophancy.sh`](no-sycophancy.sh) — search for `SYCO
 - The substantive use of any of those words *not* at message open. The hook only inspects the first 240 chars.
 - Operator-requested praise — when the message restates a request like *"you asked for encouragement"* or *"since you wanted feedback,"* the allow-clause fires and the hook stays silent.
 - Any message that opens with the actual answer, even if it later contains praise vocabulary in a substantive context (*"Brilliant is the right adjective for that approach because…"*).
+
+## Physics-backed engine
+
+This standalone hook remains the simplest install path. For users who want the
+benchmark-backed, rule-pack-hashed engine version, the same closeout mechanic is
+also available in [AgentCloseoutBench](https://github.com/waitdeadai/agent-closeout-bench):
+
+```bash
+git clone https://github.com/waitdeadai/agent-closeout-bench
+cd agent-closeout-bench
+bash adapters/claude-code/install.sh /path/to/your/project no-sycophancy
+bash scripts/hook-smoke.sh
+```
+
+The physics-backed adapter maps `no-sycophancy` to the `sycophancy` category
+engine and can be used for daily enforcement, fixtures, benchmark evaluation,
+and opt-in content-free collaboration telemetry.
 
 ## Sister tools
 
