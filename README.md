@@ -82,7 +82,14 @@ bash scripts/hook-smoke.sh
 
 The physics-backed adapter maps `no-sycophancy` to the `sycophancy` category
 engine and can be used for daily enforcement, fixtures, benchmark evaluation,
-and opt-in content-free collaboration telemetry.
+and opt-in content-free collaboration telemetry. The AgentCloseoutBench
+installer also writes a PreToolUse tamper guard for ordinary Claude Code edits
+to hook wiring, adapter env, pinned engine, and pinned rule-pack paths.
+
+This keeps the standalone hook simple while making the research lane stricter:
+`no-sycophancy` remains its own category engine inside the shared Rust runtime.
+The tamper guard is not an OS sandbox and should not be described as
+bypass-proof.
 
 ## Sister tools
 
