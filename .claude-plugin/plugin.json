@@ -1,0 +1,21 @@
+{
+  "name": "no-sycophancy",
+  "description": "Stop hook that blocks praise-spam at the opening of an assistant turn. Inspects the first 240 characters of Claude's outgoing message and refuses validation-theater openers like 'Great question' or 'You're absolutely right' unless the operator explicitly asked for praise or encouragement.",
+  "version": "0.1.0",
+  "author": {
+    "name": "waitdeadai",
+    "url": "https://github.com/waitdeadai"
+  },
+  "homepage": "https://github.com/waitdeadai/no-sycophancy",
+  "repository": "https://github.com/waitdeadai/no-sycophancy",
+  "license": "Apache-2.0",
+  "keywords": [
+    "claude-code",
+    "hooks",
+    "anti-sycophancy",
+    "dark-patterns",
+    "governance",
+    "ai-safety",
+    "stop-hook"
+  ]
+}
